@@ -1,0 +1,289 @@
+<!--===================== navbar ===============================-->
+<nav class="navbar navbar-light bg-color">
+  <div class="container-fluid">
+    <a routerLink="/product">
+      <button type="button" class="btn btn-success">Back</button>
+    </a>
+
+    <h1 style="color: aliceblue">Product List</h1>
+    <div class="d-flex">
+      <button
+        type="button"
+        class="btn btn-success"
+        data-bs-toggle="modal"
+        data-bs-target="#exampleModal"
+      >
+        Add New Product
+      </button>
+    </div>
+  </div>
+</nav>
+
+<!--==================== Table for show Data ===================== -->
+
+<div class="container-fluid banner p-4">
+  <div class="text-center col-md-offset-4 mt-2 p-4" style="background: white">
+    <div class="table-data mt-3 table-wrapper-scroll-y my-custom-scrollbar">
+      <table class="table table-hover" id="tab">
+        <thead>
+          <tr>
+            <th scope="col">Product ID</th>
+            <th scope="col">Name</th>
+            <th scope="col">Category</th>
+            <th scope="col">Price</th>
+            <th scope="col">Stock Unit</th>
+            <th scope="col">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let product of productData">
+            <td>{{ product.productId }}</td>
+            <td>{{ product.name | uppercase }}</td>
+            <td>{{ product.category }}</td>
+            <td>{{ product.price | currency }} </td>
+            <td>{{ product.stockUnits }}
+              <div *ngIf="product.stockUnits > 10;">
+                <span style="color: green;">Availabe</span>
+              </div>
+
+              <div *ngIf="product.stockUnits <= 10 && product.stockUnits > 3;">
+                <span style="color:orange;">Only
+                  {{product.stockUnits}} left </span>
+              </div>
+
+              <div *ngIf="product.stockUnits <= 3;">
+                <span style="color:red;">Only
+                  {{product.stockUnits}} left </span>
+              </div>
+              
+            </td>
+           
+            <td>
+              <button
+                type="button"
+                class="btn btn-primary"
+                routerLink="details/{{product.id }}"
+              >
+                View
+              </button>
+              &nbsp;
+              <button
+                type="button"
+                class="btn btn-danger"
+                (click)="deleteProduct(product.id)"
+              >
+                Delete
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+<!--====================== Modal to Add New Product ========================== -->
+<div
+  class="modal fade"
+  id="exampleModal"
+  tabindex="-1"
+  aria-labelledby="exampleModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-dialog-scrollable modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="AddNewProductLabel">Add New Product</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <form
+          [formGroup]="addNewProduct"
+          (ngSubmit)="submit(addNewProduct.value)"
+          novalidate
+        >
+          <div class="mb-3">
+            <label for="ProductId" class="form-label">Product Id</label>
+            <input
+              type="text"
+              class="form-control"
+              id="productId"
+              placeholder="Enter Product Id"
+              formControlName="productId"
+            />
+            <div >
+              <span
+                class="text-danger "
+                *ngIf="
+                  addNewProduct.get('productId').touched &&
+                  addNewProduct.get('productId').invalid 
+                "
+                >Enter Valid Product ID</span
+              >
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="name" class="form-label">Name</label>
+
+            <input
+              type="text"
+              class="form-control"
+              id="name"
+              placeholder="Enter Name"
+              formControlName="name"
+            />
+            <div>
+              <span
+                class="text-danger"
+                *ngIf="
+                  addNewProduct.get('name').touched &&
+                  addNewProduct.get('name').invalid
+                "
+              >
+                should less than 30 character</span
+              >
+            </div>
+          </div>
+
+          <div class="form-group mb-3">
+            <label class="form-check-label" for="category">Category</label>
+            <select
+              class="form-control"
+              id="category"
+              formControlName="category"
+            >
+              <option value="Phone">Phone</option>
+              <option value="Tv">Tv</option>
+              <option value="Laptop">Laptop</option>
+            </select>
+          </div>
+
+        
+
+
+          <div class="mb-3">
+            <label for="price" class="form-label">Price</label>
+            <input
+              type="text"
+              class="form-control"
+              id="price"
+              placeholder="Enter price"
+              formControlName="price"
+            />
+            <div>
+              <span
+                class="text-danger"
+                *ngIf="
+                  addNewProduct.get('price').touched &&
+                  addNewProduct.get('price').invalid
+                "
+              >
+                Must be Number</span
+              >
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="exampleInputPassword1" class="form-label"
+              >Model Number</label
+            >
+            <input
+              type="text"
+              class="form-control"
+              id="modelNumber"
+              placeholder="Enter Model Number"
+              formControlName="serialNumber"
+            />
+            <div>
+              <span
+                class="text-danger"
+                *ngIf="
+                  addNewProduct.get('serialNumber').touched &&
+                  addNewProduct.get('serialNumber').invalid
+                "
+                >Enter Valid Model Number</span
+              >
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="releaseDate" class="form-label">Release Date</label>
+            <input
+              type="date"
+              class="form-control"
+              id="releaseDate"
+              formControlName="releaseDate"
+              max="{{ maxDate }}"
+            />
+          </div>
+
+          <div class="mb-3">
+            <label for="stockUnits" class="form-label">Stock Units</label>
+            <input
+              type="text"
+              class="form-control"
+              id="stockUnits"
+              placeholder="Enter Stock Units"
+              formControlName="stockUnits"
+            />
+            <div>
+              <span
+                class="text-danger"
+                *ngIf="
+                  addNewProduct.get('stockUnits').touched &&
+                  addNewProduct.get('stockUnits').invalid
+                "
+                >Enter Valid Stock Units</span
+              >
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="description" class="form-label">Description</label>
+            <textarea
+              type="text"
+              class="form-control"
+              id="description"
+              placeholder="Write Description"
+              formControlName="description"
+            ></textarea>
+            <div>
+              <span
+                class="text-danger"
+                *ngIf="
+                  addNewProduct.get('description').touched &&
+                  addNewProduct.get('description').invalid
+                "
+              >
+                should less than 150 character</span
+              >
+            </div>
+          </div>
+
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+              id="cancel"
+            >
+              Close
+            </button>
+            <button
+              type="submit"
+              class="btn btn-primary"
+              [disabled]="addNewProduct.invalid"
+            >
+              Add
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
